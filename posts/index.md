@@ -73,3 +73,35 @@ function isPositive(num: number) {
 - [『프로그래머의 뇌』(펠리너 헤르만스, 제이펍, 2022)](https://product.kyobobook.co.kr/detail/S000001952236)
 - [『리팩터링』(마틴 파울러, 한빛미디어, 2020)](https://product.kyobobook.co.kr/detail/S000001810241)
 
+## 사고의 depth 줄이기
+
+- 중첩 분기문, 중첩 반복문
+- 사용할 변수는 가깝게 선언하기
+
+'무조건 1 depth로 만들어라'가 아니다. 사고를 하는 RAM의 비용을 줄이자. 만약 중첩 구조가 사고에 도움이 된다면 그대로 두자. 중요한 점은 자연스러운 사고다.
+
+### 중첩 분기문, 중첩 반복문
+
+```java
+private static boolean isAllCellOpened2() {
+    return Arrays.stream(BOARD)// Stream<String[]>
+            .flatMap(Arrays::stream) // Stream<String>
+            .noneMatch(cell -> cell.equals(CLOSED_CELL_SIGN));
+}
+```
+
+Stream을 사용한다. 만약 Stream 같은 문법이 읽기 어렵다면 '로직을 나눠고 변수를 추출'하는 방법을 추천한다.
+
+### 사용할 변수는 가깝게 선언하기
+
+> 원숭이 엉덩이는 빨개<br>
+> 빨가면 사과<br>
+> 바나나는 길어<br>
+> 길으면 기차<br>
+> 기차는 빨라<br>
+> 빠르면 비행기<br>
+> 비행기는 높아<br>
+> 높으면 백두산<br>
+> 아 맞다 사과는 맛있어 (?)
+
+설명하는 문장을 떨어트리지 말고 이어서 작성한다.

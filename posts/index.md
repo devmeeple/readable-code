@@ -286,3 +286,15 @@ private static boolean isAllCellOpened() {
 도메인 지식은 만드는 것이 아니다. 발견하는 것이다.
 
 > 도메인 지식을 발견한다는 것은 '다른 문제가 생겼다'를 의미한다. 그렇다면 '탐구'자체를 좋아하지 않으면 스트레스로 다가올 것 같다.
+
+## 3.4 SOLID
+
+> SOLID Robert C. Martin(a.k.a. Uncle Bob), 클린 코드, 클린 아키텍처
+
+- SRP: Single Responsibility Principle
+- OCP: Open-Closed Principle
+- LSP: Liskov Substitution Principle
+- ISP: Interface Segregation Principle
+- DIP: Dependency Inversion Principle
+
+원칙을 이론에서 벗어나 코드레벨에서 알아보자. 과연 실무에서 적용할 수 있을까.

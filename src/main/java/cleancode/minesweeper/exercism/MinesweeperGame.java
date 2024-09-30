@@ -17,37 +17,174 @@ public class MinesweeperGame {
 
     /**
      * 게임의 메인 메서드.
-     * 게임 초기화, 진행, 종료 역할을 담당한다.
+     * 게임을 초기화하고, 게임을 진행한다. 사용자에게 좌표를 입력받는다.
      *
      * @param args 사용하지 않음
      */
     public static void main(String[] args) {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        System.out.println("지뢰찾기 게임 시작!");
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        showGameStartComments();
         Scanner scanner = new Scanner(System.in);
 
-        /**
-         * 게임 보드를 초기화한다. 모든 셀을 빈 셀로 설정한다.
-         */
+        initializeGame();
+
+        while (true) {
+            showBoard();
+
+            /**
+             * 게임의 현재 상태를 확인하고 승리 또는 패배 메시지를 출력한다.
+             */
+            if (gameStatus == 1) {
+                System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
+                break;
+            }
+            if (gameStatus == -1) {
+                System.out.println("지뢰를 밟았습니다. GAME OVER!");
+                break;
+            }
+
+            /**
+             * 사용자에게 좌표를 입력받는다. 셀을 열거나 깃발을 꽂는다.
+             * @param scanner 사용자 입력을 받기 위한 Scanner 객체
+             */
+            System.out.println("선택할 좌표를 입력하세요. (예: a1)");
+            String cellInput = scanner.nextLine();
+            System.out.println("선택한 셀에 대한 행위를 선택하세요. (1: 오픈, 2: 깃발 꽂기)");
+            String userActionInput = scanner.nextLine();
+
+            char cellInputCol = cellInput.charAt(0);
+            char cellInputRow = cellInput.charAt(1);
+
+            int selectedColIndex = convertColFrom(cellInputCol);
+            int selectedRowIndex = convertRowFrom(cellInputRow);
+
+            /**
+             * 사용자가 추가로 셀을 열었을 때
+             *
+             * (1) 지뢰가 발견되면 게임을 종료한다.
+             * (2) 지뢰가 발견되지 않으면 게임을 진행한다.
+             */
+            if (userActionInput.equals("2")) {
+                board[selectedRowIndex][selectedColIndex] = "⚑";
+                checkIfGameIsOver();
+            } else if (userActionInput.equals("1")) {
+                if (landMines[selectedRowIndex][selectedColIndex]) {
+                    board[selectedRowIndex][selectedColIndex] = "☼";
+                    gameStatus = -1;
+                    continue;
+                } else {
+                    open(selectedRowIndex, selectedColIndex);
+                }
+                checkIfGameIsOver();
+            } else {
+                System.out.println("잘못된 번호를 선택하셨습니다.");
+            }
+        }
+    }
+
+    /**
+     * 게임 종료조건을 확인한다.
+     */
+    private static void checkIfGameIsOver() {
+        boolean isAllOpened = isAllCellOpened();
+        if (isAllOpened) {
+            gameStatus = 1;
+        }
+    }
+
+    /**
+     * 지뢰가 아닌 모든 셀이 열렸는지 확인한다.
+     *
+     * @return 지뢰가 아닌 셀이 모두 열렸으면 true, 그렇지 않으면 false
+     */
+    private static boolean isAllCellOpened() {
+        boolean isAllOpened = true;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 10; col++) {
+                if (board[row][col].equals("□")) {
+                    isAllOpened = false;
+                }
+            }
+        }
+        return isAllOpened;
+    }
+
+    /**
+     * 행 문자(1-8)를 배열 인덱스로 변환한다.
+     *
+     * @param cellInputRow 행을 나타낸다. (예: '1'은 첫 번째 행)
+     * @return 행의 0 기반 인덱스
+     */
+    private static int convertRowFrom(char cellInputRow) {
+        return Character.getNumericValue(cellInputRow) - 1;
+    }
+
+    /**
+     * 열 문자(a-j)를 배열 인덱스로 변환한다.
+     *
+     * @param cellInputCol 열을 나타낸다. (예: 'a'는 첫 번째 열)
+     * @return 열의 0 기반 인덱스, 잘못된 입력은 -1을 반환한다.
+     */
+    private static int convertColFrom(char cellInputCol) {
+        switch (cellInputCol) {
+            case 'a':
+                return 0;
+            case 'b':
+                return 1;
+            case 'c':
+                return 2;
+            case 'd':
+                return 3;
+            case 'e':
+                return 4;
+            case 'f':
+                return 5;
+            case 'g':
+                return 6;
+            case 'h':
+                return 7;
+            case 'i':
+                return 8;
+            case 'j':
+                return 9;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * 게임 보드를 출력한다.
+     */
+    private static void showBoard() {
+        System.out.println("   a b c d e f g h i j");
+        for (int row = 0; row < 8; row++) {
+            System.out.printf("%d  ", row + 1);
+            for (int col = 0; col < 10; col++) {
+                System.out.print(board[row][col] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    /**
+     * 게임을 초기화한다.
+     * (1) 모든 셀을 빈 셀로 설정한다.
+     * (2) 무작위로 10개의 지뢰를 보드에 배치한다.
+     * (3) 셀 주변의 지뢰 개수를 계산한다.
+     */
+    private static void initializeGame() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 10; col++) {
                 board[row][col] = "□";
             }
         }
 
-        /**
-         * 무작위로 10개의 지뢰를 보드에 배치한다.
-         */
         for (int i = 0; i < 10; i++) {
             int col = new Random().nextInt(10);
             int row = new Random().nextInt(8);
             landMines[row][col] = true;
         }
 
-        /**
-         * 셀 주변의 지뢰 개수를 계산한다.
-         */
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 10; col++) {
                 int count = 0;
@@ -82,125 +219,15 @@ public class MinesweeperGame {
                 landMineCounts[row][col] = 0;
             }
         }
+    }
 
-        while (true) {
-            /**
-             * 게임 보드를 그린다.
-             */
-            System.out.println("   a b c d e f g h i j");
-            for (int row = 0; row < 8; row++) {
-                System.out.printf("%d  ", row + 1);
-                for (int col = 0; col < 10; col++) {
-                    System.out.print(board[row][col] + " ");
-                }
-                System.out.println();
-            }
-
-            /**
-             * 게임의 현재 상태를 확인하고 승리 또는 패배 메시지를 출력한다.
-             */
-            if (gameStatus == 1) {
-                System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
-                break;
-            }
-            if (gameStatus == -1) {
-                System.out.println("지뢰를 밟았습니다. GAME OVER!");
-                break;
-            }
-
-            /**
-             * 사용자에게 좌표를 입력받는다. 셀을 열거나 깃발을 꽂는다.
-             * @param scanner 사용자 입력을 받기 위한 Scanner 객체
-             */
-            System.out.println();
-            System.out.println("선택할 좌표를 입력하세요. (예: a1)");
-            String cellInput = scanner.nextLine();
-            System.out.println("선택한 셀에 대한 행위를 선택하세요. (1: 오픈, 2: 깃발 꽂기)");
-            String userActionInput = scanner.nextLine();
-            char cellInputCol = cellInput.charAt(0);
-            char cellInputRow = cellInput.charAt(1);
-            int selectedColIndex; // ??
-            switch (cellInputCol) {
-                case 'a':
-                    selectedColIndex = 0;
-                    break;
-                case 'b':
-                    selectedColIndex = 1;
-                    break;
-                case 'c':
-                    selectedColIndex = 2;
-                    break;
-                case 'd':
-                    selectedColIndex = 3;
-                    break;
-                case 'e':
-                    selectedColIndex = 4;
-                    break;
-                case 'f':
-                    selectedColIndex = 5;
-                    break;
-                case 'g':
-                    selectedColIndex = 6;
-                    break;
-                case 'h':
-                    selectedColIndex = 7;
-                    break;
-                case 'i':
-                    selectedColIndex = 8;
-                    break;
-                case 'j':
-                    selectedColIndex = 9;
-                    break;
-                default:
-                    selectedColIndex = -1;
-                    break;
-            }
-
-            int selectedRowIndex = Character.getNumericValue(cellInputRow) - 1;
-
-            /**
-             * 사용자가 추가로 셀을 열었을 때
-             *
-             * (1) 지뢰가 발견되면 게임을 종료한다.
-             * (2) 지뢰가 발견되지 않으면 게임을 진행한다.
-             */
-            if (userActionInput.equals("2")) {
-                board[selectedRowIndex][selectedColIndex] = "⚑";
-                boolean isAllOpened = true;
-                for (int row = 0; row < 8; row++) {
-                    for (int col = 0; col < 10; col++) {
-                        if (board[row][col].equals("□")) {
-                            isAllOpened = false;
-                        }
-                    }
-                }
-                if (isAllOpened) {
-                    gameStatus = 1;
-                }
-
-            } else if (userActionInput.equals("1")) {
-                if (landMines[selectedRowIndex][selectedColIndex]) {
-                    board[selectedRowIndex][selectedColIndex] = "☼";
-                    gameStatus = -1;
-                    continue;
-                } else {
-                    open(selectedRowIndex, selectedColIndex);
-                }
-                boolean isAllOpened = true;
-                for (int row = 0; row < 8; row++) {
-                    for (int col = 0; col < 10; col++) {
-                        if (board[row][col].equals("□")) {
-                            isAllOpened = false;
-                        }
-                    }
-                }
-                if (isAllOpened) {
-                    gameStatus = 1;
-                }
-            } else {
-                System.out.println("잘못된 번호를 선택하셨습니다.");
-            }
-        }
+    /**
+     * 게임 시작 메시지를 출력한다.
+     */
+    private static void showGameStartComments() {
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println("지뢰찾기 게임 시작!");
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 
     /**

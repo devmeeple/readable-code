@@ -35,11 +35,11 @@ public class MinesweeperGame {
      */
     public static void main(String[] args) {
         showGameStartComments();
-
         initializeGame();
 
         while (true) {
             showBoard();
+
             if (doesUserWinTheGame()) {
                 System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
                 break;
@@ -51,7 +51,6 @@ public class MinesweeperGame {
 
             String cellInput = getCellInputFromUser();
             String userActionInput = getUserActionInputFromUser();
-
             actOnCell(cellInput, userActionInput);
         }
     }
@@ -81,6 +80,7 @@ public class MinesweeperGame {
                 changeGameStatusToLose();
                 return;
             }
+            
             open(selectedRowIndex, selectedColIndex);
             checkIfGameIsOver();
             return;

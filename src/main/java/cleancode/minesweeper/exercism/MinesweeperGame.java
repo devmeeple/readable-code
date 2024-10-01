@@ -39,7 +39,6 @@ public class MinesweeperGame {
 
         while (true) {
             showBoard();
-
             if (doesUserWinTheGame()) {
                 System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
                 break;
@@ -49,39 +48,44 @@ public class MinesweeperGame {
                 break;
             }
 
-            /**
-             * 사용자에게 좌표를 입력받는다. 셀을 열거나 깃발을 꽂는다.
-             * @param scanner 사용자 입력을 받기 위한 Scanner 객체
-             */
             String cellInput = getCellInputFromUser(scanner);
             String userActionInput = getUserActionInputFromUser(scanner);
 
-            int selectedColIndex = getSelectedColIndex(cellInput);
-            int selectedRowIndex = getSelectedRowIndex(cellInput);
-
-
-            /**
-             * 사용자가 추가로 셀을 열었을 때
-             *
-             * (1) 지뢰가 발견되면 게임을 종료한다.
-             * (2) 지뢰가 발견되지 않으면 게임을 진행한다.
-             */
-            if (doesUserChooseToPlantFlag(userActionInput)) {
-                BOARD[selectedRowIndex][selectedColIndex] = FLAG_SIGN;
-                checkIfGameIsOver();
-            } else if (doesUserChooseToOpenCell(userActionInput)) {
-                if (isLandMineCell(selectedRowIndex, selectedColIndex)) {
-                    BOARD[selectedRowIndex][selectedColIndex] = LANG_MINE_SIGN;
-                    changeGameStatusToLose();
-                    continue;
-                } else {
-                    open(selectedRowIndex, selectedColIndex);
-                }
-                checkIfGameIsOver();
-            } else {
-                System.out.println("잘못된 번호를 선택하셨습니다.");
-            }
+            actOnCell(cellInput, userActionInput);
         }
+    }
+    
+    /**
+     * 사용자는 추가로 셀을 열었을 때
+     * <p>
+     * (1) 깃발을 꽂고 지뢰가 발견되면 게임을 종료한다.
+     * (2) 지뢰가 발견되지 않으면 게임을 진행한다.
+     *
+     * @param cellInput       선택한 셀
+     * @param userActionInput 번호
+     */
+    private static void actOnCell(String cellInput, String userActionInput) {
+        int selectedColIndex = getSelectedColIndex(cellInput);
+        int selectedRowIndex = getSelectedRowIndex(cellInput);
+
+        if (doesUserChooseToPlantFlag(userActionInput)) {
+            BOARD[selectedRowIndex][selectedColIndex] = FLAG_SIGN;
+            checkIfGameIsOver();
+            return;
+        }
+
+        if (doesUserChooseToOpenCell(userActionInput)) {
+            if (isLandMineCell(selectedRowIndex, selectedColIndex)) {
+                BOARD[selectedRowIndex][selectedColIndex] = LANG_MINE_SIGN;
+                changeGameStatusToLose();
+                return;
+            }
+            open(selectedRowIndex, selectedColIndex);
+            checkIfGameIsOver();
+            return;
+        }
+        System.out.println("잘못된 번호를 선택하셨습니다.");
+
     }
 
     /**

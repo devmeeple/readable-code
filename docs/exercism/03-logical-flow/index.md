@@ -39,3 +39,42 @@ JavaScript에서 함수형 프로그래밍을 사용하는 방법을 보며 이�
 하지만 문장에 쉼표가, 문단에 여백이 있다면 메시지를 전달하기 용이하다.
 
 코드에서 공백도 유사하다. 관련 있는 정보를 그룹 짓고 읽는 사람에게 정보를 전달한다.
+
+## 3.5 부정어를 대하는 자세
+
+부정어가 들어가면 불필요한 사고를 한 번 더 한다. 읽기도 불편하다. 그렇다면 어떻게 부정어를 없앨 수 있을까?
+
+1. 다른 표현을 떠올린다.
+2. 사고를 변경한다.
+
+예를 들어 '복잡하지 않은 문제'라는 표현을 '단순한 문제'라고 표현한다.
+
+```typescript
+// BAD
+if (!file.exists()) {
+  doSomething();
+}
+
+// GOOD
+if (file.doesNotExist()) {
+  doSomething();
+}
+```
+
+```typescript
+
+```
+
+```typescript
+// BAD
+if (!user.isLoggedIn()) {
+  doSomething();
+}
+
+// GOOD
+if (user.isLoggedOut()) {
+  doSomething();
+}
+```
+
+어떻게 긍정적인 표현으로 전환할지 고민하라.

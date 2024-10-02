@@ -38,20 +38,27 @@ public class MinesweeperGame {
         initializeGame();
 
         while (true) {
-            showBoard();
+            try {
+                showBoard();
 
-            if (doesUserWinTheGame()) {
-                System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
-                break;
-            }
-            if (doesUserLoseTheGame()) {
-                System.out.println("지뢰를 밟았습니다. GAME OVER!");
-                break;
+                if (doesUserWinTheGame()) {
+                    System.out.println("지뢰를 모두 찾았습니다. GAME CLEAR!");
+                    break;
+                }
+                if (doesUserLoseTheGame()) {
+                    System.out.println("지뢰를 밟았습니다. GAME OVER!");
+                    break;
+                }
+
+                String cellInput = getCellInputFromUser();
+                String userActionInput = getUserActionInputFromUser();
+                actOnCell(cellInput, userActionInput);
+            } catch (AppException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("프로그램에 문제가 생겼습니다.");
             }
 
-            String cellInput = getCellInputFromUser();
-            String userActionInput = getUserActionInputFromUser();
-            actOnCell(cellInput, userActionInput);
         }
     }
 
@@ -85,8 +92,7 @@ public class MinesweeperGame {
             checkIfGameIsOver();
             return;
         }
-        System.out.println("잘못된 번호를 선택하셨습니다.");
-
+        throw new AppException("잘못된 번호를 선택하셨습니다.");
     }
 
     /**
@@ -103,7 +109,7 @@ public class MinesweeperGame {
     /**
      * 사용자가 선택한 입력이 셀 열기인가요?
      *
-     * @param userActionInput
+     * @param userActionInput 선택 번호
      * @return 입력이 1번이 맞으면 true, 아니라면 false
      */
     private static boolean doesUserChooseToOpenCell(String userActionInput) {
@@ -113,7 +119,7 @@ public class MinesweeperGame {
     /**
      * 사용자가 선택한 입력이 깃발 꽂기인가요?
      *
-     * @param userActionInput
+     * @param userActionInput 선택 번호
      * @return 입력이 2번이 맞으면 true, 아니라면 false
      */
     private static boolean doesUserChooseToPlantFlag(String userActionInput) {
@@ -184,24 +190,29 @@ public class MinesweeperGame {
     private static boolean isAllCellOpened() {
         return Arrays.stream(BOARD)
                 .flatMap(Arrays::stream)
-                .noneMatch(cell -> cell.equals(CLOSED_CELL_SIGN));
+                .noneMatch(CLOSED_CELL_SIGN::equals);
     }
 
     /**
      * 행 문자(1-8)를 배열 인덱스로 변환한다.
      *
      * @param cellInputRow 행을 나타낸다. (예: '1'은 첫 번째 행)
-     * @return 행의 0 기반 인덱스
+     * @return 행의 0 기반 인덱스, 잘못된 입력은 예외가 발생한다.
      */
     private static int convertRowFrom(char cellInputRow) {
-        return Character.getNumericValue(cellInputRow) - 1;
+        int rowIndex = Character.getNumericValue(cellInputRow) - 1;
+        if (rowIndex >= BOARD_ROW_SIZE) {
+            throw new AppException("잘못된 입력입니다");
+        }
+
+        return rowIndex;
     }
 
     /**
      * 열 문자(a-j)를 배열 인덱스로 변환한다.
      *
      * @param cellInputCol 열을 나타낸다. (예: 'a'는 첫 번째 열)
-     * @return 열의 0 기반 인덱스, 잘못된 입력은 -1을 반환한다.
+     * @return 열의 0 기반 인덱스, 잘못된 입력은 예외가 발생한다.
      */
     private static int convertColFrom(char cellInputCol) {
         switch (cellInputCol) {
@@ -226,7 +237,7 @@ public class MinesweeperGame {
             case 'j':
                 return 9;
             default:
-                return -1;
+                throw new AppException("잘못된 입력입니다");
         }
     }
 

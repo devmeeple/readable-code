@@ -3,9 +3,6 @@ package cleancode.minesweeper.exercism;
 import cleancode.minesweeper.exercism.io.ConsoleInputHandler;
 import cleancode.minesweeper.exercism.io.ConsoleOutputHandler;
 
-import java.util.Arrays;
-import java.util.Random;
-
 /**
  * MinesweeperGame 클래스는 지뢰 찾기 게임을 구현한다.
  * 8x10 크기의 보드에서 진행되며, 10개의 지뢰가 무작위로 배치된다.
@@ -15,9 +12,8 @@ public class Minesweeper {
 
     public static final int BOARD_ROW_SIZE = 8;
     public static final int BOARD_COL_SIZE = 10;
-    private static final Cell[][] BOARD = new Cell[BOARD_ROW_SIZE][BOARD_COL_SIZE];
-    public static final int LAND_MINE_COUNT = 10;
 
+    private final GameBoard gameBoard = new GameBoard(BOARD_ROW_SIZE, BOARD_COL_SIZE);
     private final ConsoleInputHandler consoleInputHandler = new ConsoleInputHandler();
     private final ConsoleOutputHandler consoleOutputHandler = new ConsoleOutputHandler();
     private int gameStatus = 0; // 0: 게임 중, 1: 승리, -1: 패배
@@ -28,11 +24,11 @@ public class Minesweeper {
      */
     public void run() {
         consoleOutputHandler.showGameStartComments();
-        initializeGame();
+        gameBoard.initializeGame();
 
         while (true) {
             try {
-                consoleOutputHandler.showBoard(BOARD);
+                consoleOutputHandler.showBoard(gameBoard);
 
                 if (doesUserWinTheGame()) {
                     consoleOutputHandler.printGameWinningComment();
@@ -69,19 +65,19 @@ public class Minesweeper {
         int selectedRowIndex = getSelectedRowIndex(cellInput);
 
         if (doesUserChooseToPlantFlag(userActionInput)) {
-            BOARD[selectedRowIndex][selectedColIndex].flag();
+            gameBoard.flag(selectedRowIndex, selectedColIndex);
             checkIfGameIsOver();
             return;
         }
 
         if (doesUserChooseToOpenCell(userActionInput)) {
-            if (isLandMineCell(selectedRowIndex, selectedColIndex)) {
-                BOARD[selectedRowIndex][selectedColIndex].open();
+            if (gameBoard.isLandMineCell(selectedRowIndex, selectedColIndex)) {
+                gameBoard.open(selectedRowIndex, selectedColIndex);
                 changeGameStatusToLose();
                 return;
             }
 
-            open(selectedRowIndex, selectedColIndex);
+            gameBoard.openSurroundedCells(selectedRowIndex, selectedColIndex);
             checkIfGameIsOver();
             return;
         }
@@ -93,10 +89,6 @@ public class Minesweeper {
      */
     private void changeGameStatusToLose() {
         gameStatus = -1;
-    }
-
-    private boolean isLandMineCell(int selectedRowIndex, int selectedColIndex) {
-        return BOARD[selectedRowIndex][selectedColIndex].isLandMine();
     }
 
     /**
@@ -161,8 +153,7 @@ public class Minesweeper {
      * 게임 종료조건을 확인한다.
      */
     private void checkIfGameIsOver() {
-        boolean isAllChecked = isAllCellChecked();
-        if (isAllChecked) {
+        if (gameBoard.isAllCellChecked()) {
             changeGameStatusToWin();
         }
     }
@@ -172,18 +163,6 @@ public class Minesweeper {
      */
     private void changeGameStatusToWin() {
         gameStatus = 1;
-    }
-
-    /**
-     * 지뢰가 아닌 모든 셀이 열렸는지 확인한다.
-     *
-     * @return 지뢰가 아닌 셀이 모두 열렸으면 true, 그렇지 않으면 false
-     */
-
-    private boolean isAllCellChecked() {
-        return Arrays.stream(BOARD)
-                .flatMap(Arrays::stream)
-                .allMatch(Cell::isChecked);
     }
 
     /**
@@ -234,102 +213,4 @@ public class Minesweeper {
         }
     }
 
-    /**
-     * 게임을 초기화한다.
-     * (1) 모든 셀을 빈 셀로 설정한다.
-     * (2) 무작위로 10개의 지뢰를 보드에 배치한다.
-     * (3) 셀 주변의 지뢰 개수를 계산한다.
-     */
-    private void initializeGame() {
-        for (int row = 0; row < BOARD_ROW_SIZE; row++) {
-            for (int col = 0; col < BOARD_COL_SIZE; col++) {
-                BOARD[row][col] = Cell.create();
-            }
-        }
-
-        for (int i = 0; i < LAND_MINE_COUNT; i++) {
-            int col = new Random().nextInt(BOARD_COL_SIZE);
-            int row = new Random().nextInt(BOARD_ROW_SIZE);
-            BOARD[row][col].turnOnLandMine();
-        }
-
-        for (int row = 0; row < BOARD_ROW_SIZE; row++) {
-            for (int col = 0; col < BOARD_COL_SIZE; col++) {
-                if (isLandMineCell(row, col)) {
-                    continue;
-                }
-                int count = countNearbyLaneMines(row, col);
-                BOARD[row][col].updateNearbyLandMineCount(count);
-            }
-        }
-    }
-
-    /**
-     * 근처 지뢰 개수를 센다.
-     *
-     * @param row 행
-     * @param col 열
-     * @return 근처 지뢰 개수를 반환한다.
-     */
-    private int countNearbyLaneMines(int row, int col) {
-        int count = 0;
-        if (row - 1 >= 0 && col - 1 >= 0 && isLandMineCell(row - 1, col - 1)) {
-            count++;
-        }
-        if (row - 1 >= 0 && isLandMineCell(row - 1, col)) {
-            count++;
-        }
-        if (row - 1 >= 0 && col + 1 < BOARD_COL_SIZE && isLandMineCell(row - 1, col + 1)) {
-            count++;
-        }
-        if (col - 1 >= 0 && isLandMineCell(row, col - 1)) {
-            count++;
-        }
-        if (col + 1 < BOARD_COL_SIZE && isLandMineCell(row, col + 1)) {
-            count++;
-        }
-        if (row + 1 < BOARD_ROW_SIZE && col - 1 >= 0 && isLandMineCell(row + 1, col - 1)) {
-            count++;
-        }
-        if (row + 1 < BOARD_ROW_SIZE && isLandMineCell(row + 1, col)) {
-            count++;
-        }
-        if (row + 1 < BOARD_ROW_SIZE && col + 1 < BOARD_COL_SIZE && isLandMineCell(row + 1, col + 1)) {
-            count++;
-        }
-        return count;
-    }
-
-    /**
-     * 지정된 셀을 열고, 필요하면 인접 셀들을 재귀로 열어 확인한다.
-     *
-     * @param row 열 인덱스
-     * @param col 행 인덱스
-     */
-    private void open(int row, int col) {
-        if (row < 0 || row >= BOARD_ROW_SIZE || col < 0 || col >= BOARD_COL_SIZE) {
-            return;
-        }
-        if (BOARD[row][col].isOpened()) {
-            return;
-        }
-        if (isLandMineCell(row, col)) {
-            return;
-        }
-
-        BOARD[row][col].open();
-
-        if (BOARD[row][col].hasLandMineCount()) {
-            return;
-        }
-
-        open(row - 1, col - 1);
-        open(row - 1, col);
-        open(row - 1, col + 1);
-        open(row, col - 1);
-        open(row, col + 1);
-        open(row + 1, col - 1);
-        open(row + 1, col);
-        open(row + 1, col + 1);
-    }
 }

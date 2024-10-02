@@ -9,7 +9,7 @@ import java.util.Scanner;
  * 8x10 크기의 보드에서 진행되며, 10개의 지뢰가 무작위로 배치된다.
  * 플레이어는 셀을 선택하고 열거나 깃발을 꽂을 수 있다.
  */
-public class MinesweeperGame {
+public class Minesweeper {
 
     public static final int BOARD_ROW_SIZE = 8;
     public static final int BOARD_COL_SIZE = 10;
@@ -17,15 +17,13 @@ public class MinesweeperGame {
     private static final Cell[][] BOARD = new Cell[BOARD_ROW_SIZE][BOARD_COL_SIZE];
     public static final int LAND_MINE_COUNT = 10;
 
-    private static int gameStatus = 0; // 0: 게임 중, 1: 승리, -1: 패배
+    private int gameStatus = 0; // 0: 게임 중, 1: 승리, -1: 패배
 
     /**
      * 게임의 메인 메서드.
      * 게임을 초기화하고, 게임을 진행한다. 사용자에게 좌표를 입력받는다.
-     *
-     * @param args 사용하지 않음
      */
-    public static void main(String[] args) {
+    public void run() {
         showGameStartComments();
         initializeGame();
 
@@ -63,7 +61,7 @@ public class MinesweeperGame {
      * @param cellInput       선택한 셀
      * @param userActionInput 번호
      */
-    private static void actOnCell(String cellInput, String userActionInput) {
+    private void actOnCell(String cellInput, String userActionInput) {
         int selectedColIndex = getSelectedColIndex(cellInput);
         int selectedRowIndex = getSelectedRowIndex(cellInput);
 
@@ -90,11 +88,11 @@ public class MinesweeperGame {
     /**
      * 게임에서 패배한다.
      */
-    private static void changeGameStatusToLose() {
+    private void changeGameStatusToLose() {
         gameStatus = -1;
     }
 
-    private static boolean isLandMineCell(int selectedRowIndex, int selectedColIndex) {
+    private boolean isLandMineCell(int selectedRowIndex, int selectedColIndex) {
         return BOARD[selectedRowIndex][selectedColIndex].isLandMine();
     }
 
@@ -104,7 +102,7 @@ public class MinesweeperGame {
      * @param userActionInput 선택 번호
      * @return 입력이 1번이 맞으면 true, 아니라면 false
      */
-    private static boolean doesUserChooseToOpenCell(String userActionInput) {
+    private boolean doesUserChooseToOpenCell(String userActionInput) {
         return userActionInput.equals("1");
     }
 
@@ -114,26 +112,26 @@ public class MinesweeperGame {
      * @param userActionInput 선택 번호
      * @return 입력이 2번이 맞으면 true, 아니라면 false
      */
-    private static boolean doesUserChooseToPlantFlag(String userActionInput) {
+    private boolean doesUserChooseToPlantFlag(String userActionInput) {
         return userActionInput.equals("2");
     }
 
-    private static int getSelectedRowIndex(String cellInput) {
+    private int getSelectedRowIndex(String cellInput) {
         char cellInputRow = cellInput.charAt(1);
         return convertRowFrom(cellInputRow);
     }
 
-    private static int getSelectedColIndex(String cellInput) {
+    private int getSelectedColIndex(String cellInput) {
         char cellInputCol = cellInput.charAt(0);
         return convertColFrom(cellInputCol);
     }
 
-    private static String getUserActionInputFromUser() {
+    private String getUserActionInputFromUser() {
         System.out.println("선택한 셀에 대한 행위를 선택하세요. (1: 오픈, 2: 깃발 꽂기)");
         return SCANNER.nextLine();
     }
 
-    private static String getCellInputFromUser() {
+    private String getCellInputFromUser() {
         System.out.println("선택할 좌표를 입력하세요. (예: a1)");
         return SCANNER.nextLine();
     }
@@ -143,7 +141,7 @@ public class MinesweeperGame {
      *
      * @return -1 패배
      */
-    private static boolean doesUserLoseTheGame() {
+    private boolean doesUserLoseTheGame() {
         return gameStatus == -1;
     }
 
@@ -152,14 +150,14 @@ public class MinesweeperGame {
      *
      * @return 1 승리
      */
-    private static boolean doesUserWinTheGame() {
+    private boolean doesUserWinTheGame() {
         return gameStatus == 1;
     }
 
     /**
      * 게임 종료조건을 확인한다.
      */
-    private static void checkIfGameIsOver() {
+    private void checkIfGameIsOver() {
         boolean isAllChecked = isAllCellChecked();
         if (isAllChecked) {
             changeGameStatusToWin();
@@ -169,7 +167,7 @@ public class MinesweeperGame {
     /**
      * 게임에서 승리한다.
      */
-    private static void changeGameStatusToWin() {
+    private void changeGameStatusToWin() {
         gameStatus = 1;
     }
 
@@ -179,7 +177,7 @@ public class MinesweeperGame {
      * @return 지뢰가 아닌 셀이 모두 열렸으면 true, 그렇지 않으면 false
      */
 
-    private static boolean isAllCellChecked() {
+    private boolean isAllCellChecked() {
         return Arrays.stream(BOARD)
                 .flatMap(Arrays::stream)
                 .allMatch(Cell::isChecked);
@@ -191,7 +189,7 @@ public class MinesweeperGame {
      * @param cellInputRow 행을 나타낸다. (예: '1'은 첫 번째 행)
      * @return 행의 0 기반 인덱스, 잘못된 입력은 예외가 발생한다.
      */
-    private static int convertRowFrom(char cellInputRow) {
+    private int convertRowFrom(char cellInputRow) {
         int rowIndex = Character.getNumericValue(cellInputRow) - 1;
         if (rowIndex >= BOARD_ROW_SIZE) {
             throw new AppException("잘못된 입력입니다");
@@ -206,7 +204,7 @@ public class MinesweeperGame {
      * @param cellInputCol 열을 나타낸다. (예: 'a'는 첫 번째 열)
      * @return 열의 0 기반 인덱스, 잘못된 입력은 예외가 발생한다.
      */
-    private static int convertColFrom(char cellInputCol) {
+    private int convertColFrom(char cellInputCol) {
         switch (cellInputCol) {
             case 'a':
                 return 0;
@@ -236,7 +234,7 @@ public class MinesweeperGame {
     /**
      * 게임 보드를 출력한다.
      */
-    private static void showBoard() {
+    private void showBoard() {
         System.out.println("   a b c d e f g h i j");
         for (int row = 0; row < BOARD_ROW_SIZE; row++) {
             System.out.printf("%d  ", row + 1);
@@ -254,7 +252,7 @@ public class MinesweeperGame {
      * (2) 무작위로 10개의 지뢰를 보드에 배치한다.
      * (3) 셀 주변의 지뢰 개수를 계산한다.
      */
-    private static void initializeGame() {
+    private void initializeGame() {
         for (int row = 0; row < BOARD_ROW_SIZE; row++) {
             for (int col = 0; col < BOARD_COL_SIZE; col++) {
                 BOARD[row][col] = Cell.create();
@@ -285,7 +283,7 @@ public class MinesweeperGame {
      * @param col 열
      * @return 근처 지뢰 개수를 반환한다.
      */
-    private static int countNearbyLaneMines(int row, int col) {
+    private int countNearbyLaneMines(int row, int col) {
         int count = 0;
         if (row - 1 >= 0 && col - 1 >= 0 && isLandMineCell(row - 1, col - 1)) {
             count++;
@@ -317,7 +315,7 @@ public class MinesweeperGame {
     /**
      * 게임 시작 메시지를 출력한다.
      */
-    private static void showGameStartComments() {
+    private void showGameStartComments() {
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         System.out.println("지뢰찾기 게임 시작!");
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -329,7 +327,7 @@ public class MinesweeperGame {
      * @param row 열 인덱스
      * @param col 행 인덱스
      */
-    private static void open(int row, int col) {
+    private void open(int row, int col) {
         if (row < 0 || row >= BOARD_ROW_SIZE || col < 0 || col >= BOARD_COL_SIZE) {
             return;
         }
@@ -355,5 +353,4 @@ public class MinesweeperGame {
         open(row + 1, col);
         open(row + 1, col + 1);
     }
-
 }

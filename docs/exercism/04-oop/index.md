@@ -39,3 +39,6 @@
 - `Cell` 기반으로 `Board` 변경하기
 - 상수 옮기기 -> `Cell`
 - 도메인 지식 발견
+
+## 4.4 SRP: Single Responsibility Principle
+

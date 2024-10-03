@@ -11,7 +11,7 @@ public class OrderService {
             return false;
         }
 
-        if (!(order.getTotalPrice() > 0)) {
+        if (order.getTotalPrice() <= 0) {
             log.info("올바르지 않은 총 가격입니다.");
             return false;
         }

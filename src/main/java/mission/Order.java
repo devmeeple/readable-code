@@ -17,15 +17,15 @@ public class Order {
         return new Order(items, totalPrice, customer);
     }
 
-    public List<Item> getItems() {
-        return items;
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
+    public boolean isNotValidTotalPrice() {
+        return totalPrice <= 0;
     }
 
-    public boolean hasCustomerInfo() {
-        return customer != null;
+    public boolean hasNoCustomerInfo() {
+        return customer == null;
     }
 }

@@ -3,6 +3,9 @@ package cleancode.minesweeper.exercism.io;
 import cleancode.minesweeper.exercism.GameBoard;
 import cleancode.minesweeper.exercism.GameException;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 public class ConsoleOutputHandler {
 
     /**
@@ -18,15 +21,31 @@ public class ConsoleOutputHandler {
      * 게임 보드를 출력한다.
      */
     public void showBoard(GameBoard board) {
-        System.out.println("   a b c d e f g h i j");
+        String alphabets = generateColAlphabets(board);
+
+        System.out.println("    " + alphabets);
         for (int row = 0; row < board.getRowSize(); row++) {
-            System.out.printf("%d  ", row + 1);
+            System.out.printf("%2d  ", row + 1);
             for (int col = 0; col < board.getColSize(); col++) {
                 System.out.print(board.getSign(row, col) + " ");
             }
             System.out.println();
         }
         System.out.println();
+    }
+
+    /**
+     * 게임판 출력에 사용하는 알파벳을 만든다.
+     *
+     * @param board 게임판
+     * @return 만들어진 알파벳을 반환한다.
+     */
+    private String generateColAlphabets(GameBoard board) {
+        List<String> alphabets = IntStream.range(0, board.getColSize())
+                .mapToObj(index -> (char) ('a' + index))
+                .map(Object::toString)
+                .toList();
+        return String.join(" ", alphabets);
     }
 
     public void printGameWinningComment() {

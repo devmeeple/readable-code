@@ -1,5 +1,7 @@
 package cleancode.minesweeper.exercism;
 
+import cleancode.minesweeper.exercism.game.GameInitializable;
+import cleancode.minesweeper.exercism.game.GameRunnable;
 import cleancode.minesweeper.exercism.gamelevel.GameLevel;
 import cleancode.minesweeper.exercism.io.ConsoleInputHandler;
 import cleancode.minesweeper.exercism.io.ConsoleOutputHandler;
@@ -9,7 +11,7 @@ import cleancode.minesweeper.exercism.io.ConsoleOutputHandler;
  * 8x10 크기의 보드에서 진행되며, 10개의 지뢰가 무작위로 배치된다.
  * 플레이어는 셀을 선택하고 열거나 깃발을 꽂을 수 있다.
  */
-public class Minesweeper {
+public class Minesweeper implements GameInitializable, GameRunnable {
 
     private final GameBoard gameBoard;
     private final BoardIndexConvertor boardIndexConvertor = new BoardIndexConvertor();
@@ -21,13 +23,17 @@ public class Minesweeper {
         gameBoard = new GameBoard(gameLevel);
     }
 
+    @Override
+    public void initialize() {
+        gameBoard.initializeGame();
+    }
+
     /**
      * 게임의 메인 메서드.
      * 게임을 초기화하고, 게임을 진행한다. 사용자에게 좌표를 입력받는다.
      */
     public void run() {
         consoleOutputHandler.showGameStartComments();
-        gameBoard.initializeGame();
 
         while (true) {
             try {

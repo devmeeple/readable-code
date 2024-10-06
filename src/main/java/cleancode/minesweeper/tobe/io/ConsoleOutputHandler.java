@@ -2,15 +2,13 @@ package cleancode.minesweeper.tobe.io;
 
 import cleancode.minesweeper.tobe.GameBoard;
 import cleancode.minesweeper.tobe.GameException;
+import cleancode.minesweeper.tobe.position.CellPosition;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class ConsoleOutputHandler implements OutputHandler {
 
-    /**
-     * 게임 시작 메시지를 출력한다.
-     */
     @Override
     public void showGameStartComments() {
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -18,9 +16,6 @@ public class ConsoleOutputHandler implements OutputHandler {
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 
-    /**
-     * 게임 보드를 출력한다.
-     */
     @Override
     public void showBoard(GameBoard board) {
         String alphabets = generateColAlphabets(board);
@@ -29,19 +24,14 @@ public class ConsoleOutputHandler implements OutputHandler {
         for (int row = 0; row < board.getRowSize(); row++) {
             System.out.printf("%2d  ", row + 1);
             for (int col = 0; col < board.getColSize(); col++) {
-                System.out.print(board.getSign(row, col) + " ");
+                CellPosition cellPosition = CellPosition.of(row, col);
+                System.out.print(board.getSign(cellPosition) + " ");
             }
             System.out.println();
         }
         System.out.println();
     }
 
-    /**
-     * 게임판 출력에 사용하는 알파벳을 만든다.
-     *
-     * @param board 게임판
-     * @return 만들어진 알파벳을 반환한다.
-     */
     private String generateColAlphabets(GameBoard board) {
         List<String> alphabets = IntStream.range(0, board.getColSize())
                 .mapToObj(index -> (char) ('a' + index))

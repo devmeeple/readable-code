@@ -6,5 +6,5 @@ public interface GameLevel {
 
     int getColSize();
 
-    int getLaneMineCount();
+    int getLandMineCount();
 }

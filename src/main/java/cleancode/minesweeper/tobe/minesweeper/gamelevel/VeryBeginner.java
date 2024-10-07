@@ -12,7 +12,7 @@ public class VeryBeginner implements GameLevel {
     }
 
     @Override
-    public int getLaneMineCount() {
+    public int getLandMineCount() {
         return 2;
     }
 }

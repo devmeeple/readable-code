@@ -9,6 +9,7 @@ import cleancode.minesweeper.tobe.minesweeper.gamelevel.GameLevel;
 import java.util.List;
 
 public class GameBoard {
+
     private final Cell[][] board;
     private final int landMineCount;
     private GameStatus gameStatus;
@@ -18,7 +19,7 @@ public class GameBoard {
         int colSize = gameLevel.getColSize();
         board = new Cell[rowSize][colSize];
 
-        landMineCount = gameLevel.getLaneMineCount();
+        landMineCount = gameLevel.getLandMineCount();
         initializeGameStatus();
     }
 
@@ -57,7 +58,8 @@ public class GameBoard {
         int rowSize = getRowSize();
         int colSize = getColSize();
 
-        return cellPosition.isRowIndexMoreThanOrEqual(rowSize) || cellPosition.isColIndexMoreThanOrEqual(colSize);
+        return cellPosition.isRowIndexMoreThanOrEqual(rowSize)
+                || cellPosition.isColIndexMoreThanOrEqual(colSize);
     }
 
     public boolean isInProgress() {
@@ -104,14 +106,14 @@ public class GameBoard {
 
     private void initializeNumberCells(List<CellPosition> numberPositionCandidates) {
         for (CellPosition candidatePosition : numberPositionCandidates) {
-            int count = countNearbyLaneMines(candidatePosition);
+            int count = countNearbyLandMines(candidatePosition);
             if (count != 0) {
                 updateCellAt(candidatePosition, new NumberCell(count));
             }
         }
     }
 
-    private int countNearbyLaneMines(CellPosition cellPosition) {
+    private int countNearbyLandMines(CellPosition cellPosition) {
         int rowSize = getRowSize();
         int colSize = getColSize();
 
@@ -132,7 +134,7 @@ public class GameBoard {
     }
 
     private void updateCellAt(CellPosition position, Cell cell) {
-        board[position.getRowIndex()][position.getRowIndex()] = cell;
+        board[position.getRowIndex()][position.getColIndex()] = cell;
     }
 
     private void openSurroundedCells(CellPosition cellPosition) {

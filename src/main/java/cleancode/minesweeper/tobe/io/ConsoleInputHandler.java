@@ -14,7 +14,7 @@ public class ConsoleInputHandler implements InputHandler {
     @Override
     public UserAction getUserActionFromUser() {
         String userInput = SCANNER.nextLine();
-        
+
         if ("1".equals(userInput)) {
             return UserAction.OPEN;
         }
@@ -29,8 +29,8 @@ public class ConsoleInputHandler implements InputHandler {
     public CellPosition getCellPositionFromUser() {
         String userInput = SCANNER.nextLine();
 
-        int colIndex = boardIndexConvertor.getSelectedColIndex(userInput);
         int rowIndex = boardIndexConvertor.getSelectedRowIndex(userInput);
-        return CellPosition.of(colIndex, rowIndex);
+        int colIndex = boardIndexConvertor.getSelectedColIndex(userInput);
+        return CellPosition.of(rowIndex, colIndex);
     }
 }

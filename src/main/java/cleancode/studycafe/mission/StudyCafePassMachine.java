@@ -24,7 +24,7 @@ public class StudyCafePassMachine {
             outputHandler.askPassTypeSelection();
             StudyCafePassType studyCafePassType = inputHandler.getPassTypeSelectingUserAction();
 
-            if (studyCafePassType == StudyCafePassType.HOURLY) {
+            if (StudyCafePassType.HOURLY.equals(studyCafePassType)) {
                 List<StudyCafePass> studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
                 List<StudyCafePass> hourlyPasses = studyCafePasses.stream()
                         .filter(studyCafePass -> studyCafePass.getPassType() == StudyCafePassType.HOURLY)
@@ -35,7 +35,7 @@ public class StudyCafePassMachine {
                 return;
             }
 
-            if (studyCafePassType == StudyCafePassType.WEEKLY) {
+            if (StudyCafePassType.WEEKLY.equals(studyCafePassType)) {
                 List<StudyCafePass> studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
                 List<StudyCafePass> weeklyPasses = studyCafePasses.stream()
                         .filter(studyCafePass -> studyCafePass.getPassType() == StudyCafePassType.WEEKLY)
@@ -46,7 +46,7 @@ public class StudyCafePassMachine {
                 return;
             }
 
-            if (studyCafePassType == StudyCafePassType.FIXED) {
+            if (StudyCafePassType.FIXED.equals(studyCafePassType)) {
                 List<StudyCafePass> studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
                 List<StudyCafePass> fixedPasses = studyCafePasses.stream()
                         .filter(studyCafePass -> studyCafePass.getPassType() == StudyCafePassType.FIXED)

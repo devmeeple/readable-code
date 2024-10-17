@@ -2,10 +2,16 @@
 
 ## 🔍 진행방식
 
-- 지뢰 찾기 또는 스터디 카페 단위 테스트를 작성한다.
-- 3개 이상의 서로 다른 클래스, 총 7개 이상의 테스트를 작성한다.
-- `@DisplayName`을 사용한다.
-- `BDD(given/when/then)` 주석을 사용한다.
+- 지뢰 찾기 또는 **스터디 카페 단위 테스트**를 작성한다. ✅
+- **3개 이상의 서로 다른 클래스**, **총 7개 이상의 테스트**를 작성한다. ✅
+    - `StudyCafePass`
+        - `StudyCafeLockerPass`
+    - `StudyCafeLockerPasses`
+    - `StuduCafeSeatPasses`
+    - `StudyCafePassOrder`
+    - `StudyCafePassType`
+- `@DisplayName`을 사용한다. ✅
+- `BDD(given/when/then)` 주석을 사용한다. ✅
 
 ## ✉️ 미션 제출 방법
 
